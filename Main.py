@@ -18,6 +18,7 @@ def import_csv(loc):
 
 if __name__ == '__main__':
 
+    # Train phase
     Data_Proc.data_process()
 
     x_train = np.array(Word2Vec.fit(import_csv(os.getcwd() + '/Model/Data/Data_train_preprocessing_k-5.csv')))
@@ -29,3 +30,22 @@ if __name__ == '__main__':
         model = SVM.fit(x_train, y_train[:, i])
         joblib.dump(model, os.getcwd() + '/Model/SVM_Model/Model_{}.pkl'.format(i + 1))
 
+    # Test phase
+
+    x = import_csv(os.getcwd() + '/Model/Data/Data_test_k-5.csv')[0]
+    for i in range(len(x)):
+        x[i] = Data_Proc.preprocessing(x[i])
+
+    x_test = np.array(Word2Vec.fit(x))
+    y_test = np.array(import_csv(os.getcwd() + '/Model/Data/Target_test_k-5.csv'))
+
+    y_test = np.int_(y_test)
+
+    score = 0
+
+    for i in range(3):
+        model = joblib.load(os.getcwd() + '/Model/SVM_Model/Model_{}.pkl'.format(i + 1))
+        score += model.score(x_test, y_test[:, i])
+
+    print('Akurasi\t\t\t: {}'.format(score/3))
+    print('Hamming loss\t: {}'.format(1-(score/3)))

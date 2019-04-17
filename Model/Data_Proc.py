@@ -21,6 +21,7 @@ def load_data():
 
 
 def preprocessing(sentence):
+    pre = Preprocessing.Preprocessing()
     sentence = pre.caseFolding(sentence)
     token = pre.tokenisasi(sentence)
     token = pre.stopwordRemoval(token)
@@ -68,9 +69,6 @@ def save_text_csv(loc, d):
 
 
 def data_process():
-
-    global pre
-    pre = Preprocessing.Preprocessing()
 
     X, y = load_data()
     X = np.array(X)
