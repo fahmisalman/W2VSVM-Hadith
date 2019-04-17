@@ -26,26 +26,30 @@ if __name__ == '__main__':
 
     y_train = np.int_(y_train)
 
-    for i in range(3):
-        model = SVM.fit(x_train, y_train[:, i])
-        joblib.dump(model, os.getcwd() + '/Model/SVM_Model/Model_{}.pkl'.format(i + 1))
+    kernel_svm = ['linear', 'poly', 'rbf', 'sigmoid']
 
-    # Test phase
+    for ii in range(len(kernel_svm)):
 
-    x = import_csv(os.getcwd() + '/Model/Data/Data_test_k-5.csv')[0]
-    for i in range(len(x)):
-        x[i] = Data_Proc.preprocessing(x[i])
+        for i in range(3):
+            model = SVM.fit(x_train, y_train[:, i], kernel=kernel_svm[ii])
+            joblib.dump(model, os.getcwd() + '/Model/SVM_Model/Model_{}.pkl'.format(i + 1))
 
-    x_test = np.array(Word2Vec.fit(x))
-    y_test = np.array(import_csv(os.getcwd() + '/Model/Data/Target_test_k-5.csv'))
+        # Test phase
 
-    y_test = np.int_(y_test)
+        x = import_csv(os.getcwd() + '/Model/Data/Data_test_k-5.csv')[0]
+        for i in range(len(x)):
+            x[i] = Data_Proc.preprocessing(x[i])
 
-    score = 0
+        x_test = np.array(Word2Vec.fit(x))
+        y_test = np.array(import_csv(os.getcwd() + '/Model/Data/Target_test_k-5.csv'))
 
-    for i in range(3):
-        model = joblib.load(os.getcwd() + '/Model/SVM_Model/Model_{}.pkl'.format(i + 1))
-        score += model.score(x_test, y_test[:, i])
+        y_test = np.int_(y_test)
 
-    print('Akurasi\t\t\t: {}'.format(score/3))
-    print('Hamming loss\t: {}'.format(1-(score/3)))
+        score = 0
+
+        for i in range(3):
+            model = joblib.load(os.getcwd() + '/Model/SVM_Model/Model_{}.pkl'.format(i + 1))
+            score += model.score(x_test, y_test[:, i])
+
+        print('Akurasi\t\t\t: {}'.format(score/3))
+        print('Hamming loss\t: {}'.format(1-(score/3)))
